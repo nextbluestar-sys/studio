@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -30,25 +31,34 @@ const formSchema = z.object({
   role: z.string().min(1, "Please select a role."),
 })
 
+type StaffFormValues = z.infer<typeof formSchema>
+
 interface StaffFormProps {
-  onAddStaff: (staff: Omit<Staff, 'id'>) => void;
+  onSave: (staff: Staff | Omit<Staff, "id">) => void;
+  initialData?: Staff | null;
 }
 
-export default function StaffForm({ onAddStaff }: StaffFormProps) {
-  const form = useForm<z.infer<typeof formSchema>>({
+export default function StaffForm({ onSave, initialData }: StaffFormProps) {
+  const form = useForm<StaffFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       name: "",
       email: "",
       role: "",
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    onAddStaff(values);
+  useEffect(() => {
+    form.reset(initialData || { name: "", email: "", role: "" });
+  }, [initialData, form]);
+
+
+  function onSubmit(values: StaffFormValues) {
+    const staffData = initialData ? { ...initialData, ...values } : values;
+    onSave(staffData);
     toast({
-      title: "Staff Member Added",
-      description: `${values.name} has been added to the staff list.`,
+      title: initialData ? "Staff Member Updated" : "Staff Member Added",
+      description: `${values.name} has been successfully ${initialData ? 'updated' : 'added'}.`,
     })
     form.reset();
   }
@@ -105,7 +115,7 @@ export default function StaffForm({ onAddStaff }: StaffFormProps) {
             )}
           />
         <Button type="submit" className="w-full">
-          Add Staff Member
+          {initialData ? 'Save Changes' : 'Add Staff Member'}
         </Button>
       </form>
     </Form>

@@ -9,10 +9,10 @@ export const products: Product[] = [
 ];
 
 export const staff: Staff[] = [
-  { id: 'staff-001', name: 'Alice Johnson', email: 'alice@managepro.com', role: 'Manager' },
-  { id: 'staff-002', name: 'Bob Williams', email: 'bob@managepro.com', role: 'Technician' },
-  { id: 'staff-003', name: 'Charlie Brown', email: 'charlie@managepro.com', role: 'Support Specialist' },
-  { id: 'staff-004', name: 'Diana Prince', email: 'diana@managepro.com', role: 'Technician' },
+  { id: 'staff-001', name: 'Alice Johnson', email: 'alice@managepro.com', role: 'Manager', salary: 60000 },
+  { id: 'staff-002', name: 'Bob Williams', email: 'bob@managepro.com', role: 'Technician', salary: 45000 },
+  { id: 'staff-003', name: 'Charlie Brown', email: 'charlie@managepro.com', role: 'Support Specialist', salary: 40000 },
+  { id: 'staff-004', name: 'Diana Prince', email: 'diana@managepro.com', role: 'Technician', salary: 48000 },
 ];
 
 export const customers: Customer[] = [

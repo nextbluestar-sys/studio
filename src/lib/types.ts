@@ -9,6 +9,7 @@ export interface Staff {
   name: string;
   email: string;
   role: string;
+  salary: number;
 }
 
 export interface Customer {

@@ -10,6 +10,8 @@ export interface Staff {
   email: string;
   role: string;
   salary: number;
+  username?: string;
+  password?: string;
 }
 
 export interface Customer {

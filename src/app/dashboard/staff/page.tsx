@@ -158,6 +158,7 @@ export default function StaffPage() {
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Username</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
@@ -171,6 +172,7 @@ export default function StaffPage() {
                     {staffMember.name}
                   </TableCell>
                   <TableCell>{staffMember.email}</TableCell>
+                  <TableCell>{staffMember.username}</TableCell>
                   <TableCell>
                     <Badge variant="secondary">{staffMember.role}</Badge>
                   </TableCell>

@@ -29,6 +29,8 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Invalid email address."),
   role: z.string().min(1, "Please select a role."),
+  username: z.string().min(3, "Username must be at least 3 characters."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
 })
 
 type StaffFormValues = z.infer<typeof formSchema>
@@ -45,11 +47,13 @@ export default function StaffForm({ onSave, initialData }: StaffFormProps) {
       name: "",
       email: "",
       role: "",
+      username: "",
+      password: "",
     },
   })
 
   useEffect(() => {
-    form.reset(initialData || { name: "", email: "", role: "" });
+    form.reset(initialData || { name: "", email: "", role: "", username: "", password: "" });
   }, [initialData, form]);
 
 
@@ -110,6 +114,32 @@ export default function StaffForm({ onSave, initialData }: StaffFormProps) {
                     <SelectItem value="Support Specialist">Support Specialist</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input placeholder="janesmith" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="********" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

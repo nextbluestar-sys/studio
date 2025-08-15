@@ -11,6 +11,7 @@ import {
   Briefcase,
   AreaChart,
   Settings,
+  User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -132,6 +133,14 @@ export default function DashboardLayout({
                 </SidebarMenuItem>
               </>
             )}
+             <SidebarMenuItem>
+                <Link href="/dashboard/profile" passHref>
+                  <SidebarMenuButton tooltip="Profile">
+                    <User />
+                    Profile
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>

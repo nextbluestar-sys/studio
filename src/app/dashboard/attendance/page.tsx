@@ -56,14 +56,19 @@ export default function AttendancePage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<Attendance | null>(null);
 
-  const getStatusBadgeVariant = (status: "Present" | "Absent" | "On Leave") => {
+  const getStatusBadgeVariant = (status: Attendance['status']) => {
     switch (status) {
       case "Present":
         return "default"
       case "Absent":
         return "destructive"
       case "On Leave":
+      case "Paid Leave":
+      case "Half Day":
         return "secondary"
+      case "Holiday":
+      case "Weekly Off":
+        return "outline"
       default:
         return "outline"
     }
@@ -285,7 +290,7 @@ export default function AttendancePage() {
                 </Label>
                 <Select 
                   value={editingRecord.status} 
-                  onValueChange={(value: "Present" | "Absent" | "On Leave") => setEditingRecord({...editingRecord, status: value})}
+                  onValueChange={(value: Attendance['status']) => setEditingRecord({...editingRecord, status: value})}
                 >
                   <SelectTrigger className="col-span-3" id="status">
                     <SelectValue placeholder="Select a status" />
@@ -294,6 +299,10 @@ export default function AttendancePage() {
                     <SelectItem value="Present">Present</SelectItem>
                     <SelectItem value="Absent">Absent</SelectItem>
                     <SelectItem value="On Leave">On Leave</SelectItem>
+                    <SelectItem value="Paid Leave">Paid Leave</SelectItem>
+                    <SelectItem value="Half Day">Half Day</SelectItem>
+                    <SelectItem value="Holiday">Holiday</SelectItem>
+                    <SelectItem value="Weekly Off">Weekly Off</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

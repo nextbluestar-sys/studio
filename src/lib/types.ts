@@ -40,5 +40,5 @@ export interface Attendance {
     date: string;
     clockIn: string | null;
     clockOut: string | null;
-    status: 'Present' | 'Absent' | 'On Leave';
+    status: 'Present' | 'Absent' | 'On Leave' | 'Holiday' | 'Weekly Off' | 'Half Day' | 'Paid Leave';
 }

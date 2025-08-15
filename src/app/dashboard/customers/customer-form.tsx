@@ -22,6 +22,7 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Invalid email address."),
   phone: z.string().min(10, "Phone number seems too short."),
+  siteAddress: z.string().min(5, "Site address seems too short."),
 })
 
 type CustomerFormValues = z.infer<typeof formSchema>
@@ -38,11 +39,12 @@ export default function CustomerForm({ onSave, initialData }: CustomerFormProps)
       name: "",
       email: "",
       phone: "",
+      siteAddress: "",
     },
   })
 
   useEffect(() => {
-    form.reset(initialData || { name: "", email: "", phone: "" });
+    form.reset(initialData || { name: "", email: "", phone: "", siteAddress: "" });
   }, [initialData, form]);
 
   function onSubmit(values: CustomerFormValues) {
@@ -92,6 +94,19 @@ export default function CustomerForm({ onSave, initialData }: CustomerFormProps)
               <FormLabel>Phone Number</FormLabel>
               <FormControl>
                 <Input placeholder="555-123-4567" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="siteAddress"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Site Address</FormLabel>
+              <FormControl>
+                <Input placeholder="123 Business Rd, Commerce City" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

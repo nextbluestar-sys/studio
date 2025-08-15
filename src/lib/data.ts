@@ -16,10 +16,10 @@ export const staff: Staff[] = [
 ];
 
 export const customers: Customer[] = [
-  { id: 'cust-001', name: 'Global Corp', email: 'contact@globalcorp.com', phone: '555-0101', joinedDate: '2023-01-15', purchaseHistory: [products[0], products[1]], value: 15000 },
-  { id: 'cust-002', name: 'Innovate LLC', email: 'info@innovatellc.com', phone: '555-0102', joinedDate: '2023-03-22', purchaseHistory: [products[2]], value: 8000 },
-  { id: 'cust-003', name: 'Synergy Inc', email: 'support@synergy.com', phone: '555-0103', joinedDate: '2023-05-10', purchaseHistory: [products[3], products[4]], value: 25000 },
-  { id: 'cust-004', name: 'Tech Solutions', email: 'accounts@techsolutions.com', phone: '555-0104', joinedDate: '2023-06-18', purchaseHistory: [products[0]], value: 5000 },
+  { id: 'cust-001', name: 'Global Corp', email: 'contact@globalcorp.com', phone: '555-0101', joinedDate: '2023-01-15', purchaseHistory: [products[0], products[1]], value: 15000, siteAddress: '123 Global Plaza, Metropolis' },
+  { id: 'cust-002', name: 'Innovate LLC', email: 'info@innovatellc.com', phone: '555-0102', joinedDate: '2023-03-22', purchaseHistory: [products[2]], value: 8000, siteAddress: '456 Innovation Drive, Tech Park' },
+  { id: 'cust-003', name: 'Synergy Inc', email: 'support@synergy.com', phone: '555-0103', joinedDate: '2023-05-10', purchaseHistory: [products[3], products[4]], value: 25000, siteAddress: '789 Synergy Circle, Business Bay' },
+  { id: 'cust-004', name: 'Tech Solutions', email: 'accounts@techsolutions.com', phone: '555-0104', joinedDate: '2023-06-18', purchaseHistory: [products[0]], value: 5000, siteAddress: '101 Tech Way, Solutions City' },
 ];
 
 export const complaints: Complaint[] = [

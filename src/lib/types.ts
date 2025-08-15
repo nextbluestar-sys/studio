@@ -22,6 +22,7 @@ export interface Customer {
   name: string;
   email: string;
   phone: string;
+  siteAddress: string;
   joinedDate: string;
   purchaseHistory: Product[];
   value: number;

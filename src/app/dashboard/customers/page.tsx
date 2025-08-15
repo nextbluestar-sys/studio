@@ -169,8 +169,8 @@ export default function CustomersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
+                <TableHead>Site Address</TableHead>
                 <TableHead>Joined Date</TableHead>
-                <TableHead>Purchases</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -182,16 +182,8 @@ export default function CustomersPage() {
                   <TableCell className="font-medium">{customer.name}</TableCell>
                   <TableCell>{customer.email}</TableCell>
                   <TableCell>{customer.phone}</TableCell>
+                  <TableCell>{customer.siteAddress}</TableCell>
                   <TableCell>{customer.joinedDate}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {customer.purchaseHistory.map((product) => (
-                        <Badge key={product.id} variant="secondary">
-                          {product.name}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

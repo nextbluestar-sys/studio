@@ -18,10 +18,13 @@ import {
 import EditProfileForm from "./edit-profile-form"
 import { toast } from "@/hooks/use-toast"
 import { staff as allStaff } from "@/lib/data"
+import DigitalIdCard from "./digital-id-card"
+import { CreditCard } from "lucide-react"
 
 export default function ProfilePage() {
   const [user, setUser] = useState<{ role: string; user?: Staff } | null>(null)
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [idCardOpen, setIdCardOpen] = useState(false)
 
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser")
@@ -47,7 +50,7 @@ export default function ProfilePage() {
       title: "Profile Updated",
       description: "Your profile information has been successfully updated.",
     })
-    setDialogOpen(false)
+    setEditDialogOpen(false)
   }
 
   if (!user) {
@@ -122,8 +125,16 @@ export default function ProfilePage() {
             </div>
           </div>
           {isStaff && (
-            <div className="flex justify-end pt-4">
-               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <div className="flex justify-end pt-4 gap-2">
+               <Dialog open={idCardOpen} onOpenChange={setIdCardOpen}>
+                <DialogTrigger asChild>
+                    <Button variant="outline"><CreditCard className="mr-2 h-4 w-4" />View ID Card</Button>
+                </DialogTrigger>
+                <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-sm">
+                    {user.user && <DigitalIdCard staff={user.user} />}
+                </DialogContent>
+               </Dialog>
+               <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
                 <DialogTrigger asChild>
                     <Button>Update Profile</Button>
                 </DialogTrigger>

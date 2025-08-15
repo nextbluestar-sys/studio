@@ -54,11 +54,13 @@ export default function ComplaintsPage() {
   const getStatusBadgeVariant = (status: "Open" | "In Progress" | "Resolved" | "Closed") => {
     switch (status) {
       case "Open":
-        return "default";
-      case "In Progress":
         return "secondary";
+      case "In Progress":
+        return "default";
       case "Resolved":
         return "default";
+      case "Closed":
+        return "outline"
       default:
         return "outline";
     }
@@ -126,7 +128,7 @@ export default function ComplaintsPage() {
                     <Badge variant={getPriorityBadgeVariant(complaint.priority)}>{complaint.priority}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusBadgeVariant(complaint.status)} className={complaint.status === 'Resolved' ? 'bg-green-500 text-white' : ''}>{complaint.status}</Badge>
+                    <Badge variant={getStatusBadgeVariant(complaint.status)} className={complaint.status === 'Resolved' ? 'bg-primary text-primary-foreground' : ''}>{complaint.status}</Badge>
                   </TableCell>
                   <TableCell>{complaint.assignedTo?.name || 'Unassigned'}</TableCell>
                   <TableCell>

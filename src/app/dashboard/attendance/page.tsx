@@ -80,7 +80,7 @@ export default function AttendancePage() {
                   <TableCell>{record.clockIn || "N/A"}</TableCell>
                   <TableCell>{record.clockOut || "N/A"}</TableCell>
                   <TableCell>
-                    <Badge variant={getStatusBadgeVariant(record.status)} className={record.status === 'Present' ? 'bg-green-500 text-white' : ''}>
+                    <Badge variant={getStatusBadgeVariant(record.status)} className={record.status === 'Present' ? 'bg-primary text-primary-foreground' : ''}>
                       {record.status}
                     </Badge>
                   </TableCell>

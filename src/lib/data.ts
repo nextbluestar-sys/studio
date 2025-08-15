@@ -9,10 +9,10 @@ export const products: Product[] = [
 ];
 
 export const staff: Staff[] = [
-  { id: 'staff-001', name: 'Alice Johnson', email: 'alice@managepro.com', role: 'Manager', salary: 60000, username: 'alicej', password: 'password123' },
-  { id: 'staff-002', name: 'Bob Williams', email: 'bob@managepro.com', role: 'Technician', salary: 45000, username: 'bobw', password: 'password123' },
-  { id: 'staff-003', name: 'Charlie Brown', email: 'charlie@managepro.com', role: 'Support Specialist', salary: 40000, username: 'charlieb', password: 'password123' },
-  { id: 'staff-004', name: 'Diana Prince', email: 'diana@managepro.com', role: 'Technician', salary: 48000, username: 'dianap', password: 'password123' },
+  { id: 'staff-001', name: 'Alice Johnson', email: 'alice@managepro.com', role: 'Manager', salary: 60000, username: 'alicej', password: 'password123', phone: '555-0111', address: '123 Tech Avenue, Silicon Valley', photo: null },
+  { id: 'staff-002', name: 'Bob Williams', email: 'bob@managepro.com', role: 'Technician', salary: 45000, username: 'bobw', password: 'password123', phone: '555-0112', address: '456 Circuit Board, Innovation City', photo: null },
+  { id: 'staff-003', name: 'Charlie Brown', email: 'charlie@managepro.com', role: 'Support Specialist', salary: 40000, username: 'charlieb', password: 'password123', phone: '555-0113', address: '789 Logic Lane, Compuburg', photo: null },
+  { id: 'staff-004', name: 'Diana Prince', email: 'diana@managepro.com', role: 'Technician', salary: 48000, username: 'dianap', password: 'password123', phone: '555-0114', address: '101 Data Drive, Server Town', photo: null },
 ];
 
 export const customers: Customer[] = [

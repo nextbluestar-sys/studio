@@ -28,6 +28,8 @@ import type { Staff } from "@/lib/types"
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Invalid email address."),
+  phone: z.string().optional(),
+  address: z.string().optional(),
   role: z.string().min(1, "Please select a role."),
   username: z.string().min(3, "Username must be at least 3 characters."),
   password: z.string().min(6, "Password must be at least 6 characters."),
@@ -46,6 +48,8 @@ export default function StaffForm({ onSave, initialData }: StaffFormProps) {
     defaultValues: initialData || {
       name: "",
       email: "",
+      phone: "",
+      address: "",
       role: "",
       username: "",
       password: "",
@@ -53,7 +57,7 @@ export default function StaffForm({ onSave, initialData }: StaffFormProps) {
   })
 
   useEffect(() => {
-    form.reset(initialData || { name: "", email: "", role: "", username: "", password: "" });
+    form.reset(initialData || { name: "", email: "", phone: "", address: "", role: "", username: "", password: "" });
   }, [initialData, form]);
 
 
@@ -91,6 +95,32 @@ export default function StaffForm({ onSave, initialData }: StaffFormProps) {
               <FormLabel>Email Address</FormLabel>
               <FormControl>
                 <Input placeholder="jane.smith@example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Contact Number</FormLabel>
+              <FormControl>
+                <Input placeholder="555-123-4567" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Input placeholder="123 Main St, Anytown" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

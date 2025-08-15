@@ -12,6 +12,9 @@ export interface Staff {
   salary: number;
   username?: string;
   password?: string;
+  phone?: string;
+  address?: string;
+  photo?: string | null;
 }
 
 export interface Customer {

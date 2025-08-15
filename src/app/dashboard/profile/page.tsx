@@ -32,6 +32,9 @@ export default function ProfilePage() {
   const displayName = user.role === "Admin" ? "Administrator" : user.user?.name || "Staff"
   const displayEmail = user.role === "Admin" ? "admin@bluestarconnect.com" : user.user?.email
   const displayUsername = user.role === "Admin" ? "admin" : user.user?.username
+  const displayPhone = user.role === "Admin" ? "N/A" : user.user?.phone
+  const displayAddress = user.role === "Admin" ? "N/A" : user.user?.address
+  const avatarSrc = user.user?.photo || `https://avatar.vercel.sh/${displayName}.png`
 
   return (
     <div className="space-y-8">
@@ -46,7 +49,7 @@ export default function ProfilePage() {
         <CardHeader>
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
-              <AvatarImage src={`https://avatar.vercel.sh/${displayName}.png`} alt={displayName} />
+              <AvatarImage src={avatarSrc} alt={displayName} />
               <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
             </Avatar>
             <div className="space-y-1">
@@ -56,17 +59,32 @@ export default function ProfilePage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <h3 className="font-semibold">Account Information</h3>
-            <div className="text-sm space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Username:</span>
-                <span>{displayUsername}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Role:</span>
-                <Badge variant={user.role === 'Admin' ? 'destructive' : 'secondary'}>{user.user?.role || user.role}</Badge>
-              </div>
+          <div className="space-y-4">
+            <div>
+                <h3 className="font-semibold mb-2">Account Information</h3>
+                <div className="text-sm space-y-2">
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Username:</span>
+                    <span>{displayUsername}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Role:</span>
+                    <Badge variant={user.role === 'Admin' ? 'destructive' : 'secondary'}>{user.user?.role || user.role}</Badge>
+                </div>
+                </div>
+            </div>
+            <div>
+                <h3 className="font-semibold mb-2">Contact Information</h3>
+                <div className="text-sm space-y-2">
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Contact Number:</span>
+                    <span>{displayPhone}</span>
+                </div>
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Address:</span>
+                    <span className="text-right max-w-xs truncate">{displayAddress}</span>
+                </div>
+                </div>
             </div>
           </div>
           <div className="flex justify-end pt-4">

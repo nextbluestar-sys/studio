@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -7,15 +9,35 @@ import {
 import { Users, FileWarning, CalendarCheck, Briefcase } from "lucide-react";
 
 import { customers, complaints, attendance, staff } from "@/lib/data";
+import { useEffect, useState } from "react";
 
 export default function DashboardStats() {
-  const openComplaints = complaints.filter(
-    (c) => c.status === "Open" || c.status === "In Progress"
-  ).length;
+  const [stats, setStats] = useState({
+    openComplaints: 0,
+    presentToday: 0,
+    totalComplaints: 0,
+    totalStaffForToday: 0
+  });
 
-  const presentToday = attendance.filter(
-    (a) => a.date === "2024-07-12" && a.status === "Present"
-  ).length;
+  useEffect(() => {
+    const today = new Date().toISOString().split("T")[0];
+    const openComplaints = complaints.filter(
+      (c) => c.status === "Open" || c.status === "In Progress"
+    ).length;
+
+    const presentToday = attendance.filter(
+      (a) => a.date === today && a.status === "Present"
+    ).length;
+      
+    const totalStaffForToday = staff.length;
+
+    setStats({
+      openComplaints,
+      presentToday,
+      totalComplaints: complaints.length,
+      totalStaffForToday
+    });
+  }, []);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -45,9 +67,9 @@ export default function DashboardStats() {
           <FileWarning className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{openComplaints}</div>
+          <div className="text-2xl font-bold">{stats.openComplaints}</div>
           <p className="text-xs text-muted-foreground">
-            {complaints.length} total complaints
+            {stats.totalComplaints} total complaints
           </p>
         </CardContent>
       </Card>
@@ -57,9 +79,9 @@ export default function DashboardStats() {
           <CalendarCheck className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{presentToday}</div>
+          <div className="text-2xl font-bold">{stats.presentToday}</div>
           <p className="text-xs text-muted-foreground">
-            out of {attendance.filter(a => a.date === "2024-07-12").length} staff members
+            out of {stats.totalStaffForToday} staff members
           </p>
         </CardContent>
       </Card>

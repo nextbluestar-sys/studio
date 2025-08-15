@@ -37,7 +37,7 @@ export default function StaffLoginPage() {
         title: "Login Successful",
         description: `Welcome back, ${staffMember.name}!`,
       })
-      router.push("/dashboard/complaints")
+      router.push("/dashboard")
     } else {
       toast({
         variant: "destructive",

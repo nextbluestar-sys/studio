@@ -7,6 +7,7 @@ import {
   Users,
   Briefcase,
   AreaChart,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -77,6 +78,14 @@ export default function DashboardLayout({
                 <SidebarMenuButton tooltip="Attendance">
                   <Clock />
                   Attendance
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+               <Link href="/dashboard/attendance/configuration" passHref>
+                <SidebarMenuButton tooltip="Attendance Configuration">
+                  <Settings />
+                  Attendance Config
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

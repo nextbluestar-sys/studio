@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Clock, LogIn, LogOut, MoreHorizontal, Edit } from "lucide-react"
+import Link from "next/link"
+import { Clock, LogIn, LogOut, MoreHorizontal, Edit, Settings } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -200,6 +201,12 @@ export default function AttendancePage() {
           </p>
         </div>
         <div className="flex gap-2">
+           <Link href="/dashboard/attendance/configuration">
+            <Button variant="outline">
+                <Settings className="mr-2 h-4 w-4" />
+                Configuration
+            </Button>
+           </Link>
           <Button variant="outline" onClick={() => openDialog("clockIn")}>
             <LogIn className="mr-2 h-4 w-4" />
             Clock In

@@ -1,3 +1,6 @@
+
+"use client"
+
 import Link from "next/link";
 import {
   Clock,
@@ -9,6 +12,7 @@ import {
   AreaChart,
   Settings,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import {
   SidebarProvider,
@@ -22,12 +26,27 @@ import {
 } from "@/components/ui/sidebar";
 import Header from "./components/header";
 import Logo from "../components/logo";
+import type { Staff } from "@/lib/types";
+
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [user, setUser] = useState<{ role: string, user?: Staff } | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('loggedInUser');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const isAdmin = user?.role === 'Admin';
+  const isStaff = user?.role === 'Staff';
+
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -41,14 +60,16 @@ export default function DashboardLayout({
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <Link href="/dashboard" passHref>
-                <SidebarMenuButton tooltip="Dashboard">
-                  <LayoutDashboard />
-                  Dashboard
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+            {isAdmin && (
+              <SidebarMenuItem>
+                <Link href="/dashboard" passHref>
+                  <SidebarMenuButton tooltip="Dashboard">
+                    <LayoutDashboard />
+                    Dashboard
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            )}
             <SidebarMenuItem>
               <Link href="/dashboard/customers" passHref>
                 <SidebarMenuButton tooltip="Customers">
@@ -57,14 +78,16 @@ export default function DashboardLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/dashboard/staff" passHref>
-                <SidebarMenuButton tooltip="Staff">
-                  <Briefcase />
-                  Staff
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+            {isAdmin && (
+              <SidebarMenuItem>
+                <Link href="/dashboard/staff" passHref>
+                  <SidebarMenuButton tooltip="Staff">
+                    <Briefcase />
+                    Staff
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            )}
             <SidebarMenuItem>
               <Link href="/dashboard/complaints" passHref>
                 <SidebarMenuButton tooltip="Complaints">
@@ -81,30 +104,34 @@ export default function DashboardLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-            <SidebarMenuItem>
-               <Link href="/dashboard/attendance/configuration" passHref>
-                <SidebarMenuButton tooltip="Attendance Configuration">
-                  <Settings />
-                  Attendance Config
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <Link href="/dashboard/reports" passHref>
-                <SidebarMenuButton tooltip="Reports">
-                  <AreaChart />
-                  Reports
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <Link href="/dashboard/products" passHref>
-                <SidebarMenuButton tooltip="Products">
-                  <Package />
-                  Products
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
+            {isAdmin && (
+              <>
+                <SidebarMenuItem>
+                  <Link href="/dashboard/attendance/configuration" passHref>
+                    <SidebarMenuButton tooltip="Attendance Configuration">
+                      <Settings />
+                      Attendance Config
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Link href="/dashboard/reports" passHref>
+                    <SidebarMenuButton tooltip="Reports">
+                      <AreaChart />
+                      Reports
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <Link href="/dashboard/products" passHref>
+                    <SidebarMenuButton tooltip="Products">
+                      <Package />
+                      Products
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+              </>
+            )}
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>

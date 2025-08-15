@@ -1,5 +1,7 @@
+
 "use client"
 import { PlusCircle, MoreHorizontal } from "lucide-react"
+import { useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -33,10 +35,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { complaints } from "@/lib/data"
+import { complaints as allComplaints } from "@/lib/data"
 import ComplaintForm from "./complaint-form"
+import type { Complaint, Staff } from "@/lib/types"
 
 export default function ComplaintsPage() {
+  const [user, setUser] = useState<{ role: string, user?: Staff } | null>(null);
+  const [complaints, setComplaints] = useState<Complaint[]>(allComplaints);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('loggedInUser');
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      if (parsedUser.role === 'Staff') {
+        setComplaints(allComplaints.filter(c => c.assignedTo?.id === parsedUser.user?.id));
+      }
+    }
+  }, []);
 
   const getPriorityBadgeVariant = (priority: "High" | "Medium" | "Low") => {
     switch (priority) {
@@ -66,6 +82,9 @@ export default function ComplaintsPage() {
     }
   }
 
+  const isAdmin = user?.role === 'Admin';
+
+
   return (
     <div className="space-y-8">
       <div className="flex items-start justify-between">
@@ -75,23 +94,25 @@ export default function ComplaintsPage() {
             Log, track, and manage customer complaints.
           </p>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Log Complaint
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Log New Complaint</DialogTitle>
-              <DialogDescription>
-                Use our AI assistant to prioritize and assign new complaints.
-              </DialogDescription>
-            </DialogHeader>
-            <ComplaintForm />
-          </DialogContent>
-        </Dialog>
+        {isAdmin && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Log Complaint
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Log New Complaint</DialogTitle>
+                <DialogDescription>
+                  Use our AI assistant to prioritize and assign new complaints.
+                </DialogDescription>
+              </DialogHeader>
+              <ComplaintForm />
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       <Card>
@@ -112,9 +133,11 @@ export default function ComplaintsPage() {
                 <TableHead>Priority</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Assigned To</TableHead>
-                <TableHead>
-                  <span className="sr-only">Actions</span>
-                </TableHead>
+                {isAdmin && (
+                  <TableHead>
+                    <span className="sr-only">Actions</span>
+                  </TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -131,22 +154,24 @@ export default function ComplaintsPage() {
                     <Badge variant={getStatusBadgeVariant(complaint.status)} className={complaint.status === 'Resolved' ? 'bg-primary text-primary-foreground' : ''}>{complaint.status}</Badge>
                   </TableCell>
                   <TableCell>{complaint.assignedTo?.name || 'Unassigned'}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Toggle menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Assign Staff</DropdownMenuItem>
-                        <DropdownMenuItem>Change Status</DropdownMenuItem>
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+                  {isAdmin && (
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>Assign Staff</DropdownMenuItem>
+                          <DropdownMenuItem>Change Status</DropdownMenuItem>
+                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

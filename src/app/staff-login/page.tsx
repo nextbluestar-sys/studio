@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -31,11 +32,12 @@ export default function StaffLoginPage() {
     )
 
     if (staffMember) {
+      localStorage.setItem('loggedInUser', JSON.stringify({ role: 'Staff', user: staffMember }));
       toast({
         title: "Login Successful",
         description: `Welcome back, ${staffMember.name}!`,
       })
-      router.push("/dashboard")
+      router.push("/dashboard/complaints")
     } else {
       toast({
         variant: "destructive",

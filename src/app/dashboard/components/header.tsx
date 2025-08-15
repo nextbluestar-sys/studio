@@ -1,5 +1,7 @@
+
 "use client"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   CircleUser,
   LogOut,
@@ -19,6 +21,13 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
 export default function Header() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem('loggedInUser');
+    router.push('/login');
+  }
+
   return (
     <header className="flex h-16 items-center gap-4 border-b bg-card px-4 md:px-6 sticky top-0 z-30">
         <SidebarTrigger className="md:hidden" />
@@ -42,12 +51,10 @@ export default function Header() {
               <span>Settings</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <Link href="/login">
-              <DropdownMenuItem>
-                <LogOut className="mr-2 h-4 w-4"/>
-                <span>Logout</span>
-              </DropdownMenuItem>
-            </Link>
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4"/>
+              <span>Logout</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

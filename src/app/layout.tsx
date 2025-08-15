@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'ManagePro',
+  title: 'Bluestar Tech Pro',
   description: 'A comprehensive internal management system app.',
 };
 

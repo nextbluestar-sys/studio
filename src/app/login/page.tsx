@@ -18,7 +18,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
             <Building className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-primary">ManagePro</h1>
+            <h1 className="text-3xl font-bold text-primary">Bluestar Tech Pro</h1>
           </div>
           <CardTitle className="text-2xl">Welcome Back!</CardTitle>
           <CardDescription>Enter your credentials to access your account</CardDescription>

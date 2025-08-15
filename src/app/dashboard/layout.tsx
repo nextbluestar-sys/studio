@@ -33,7 +33,7 @@ export default function DashboardLayout({
           <div className="flex items-center gap-2">
             <Building className="w-7 h-7 text-primary" />
             <h1 className="text-xl font-semibold text-sidebar-foreground">
-              ManagePro
+              Bluestar Tech Pro
             </h1>
           </div>
         </SidebarHeader>

@@ -24,6 +24,7 @@ const formSchema = z.object({
   phone: z.string().optional(),
   address: z.string().optional(),
   password: z.string().min(6, "Password must be at least 6 characters.").or(z.literal("")),
+  photo: z.string().optional(),
 })
 
 type ProfileFormValues = z.infer<typeof formSchema>
@@ -39,6 +40,7 @@ export default function EditProfileForm({ onSave, initialData }: EditProfileForm
     defaultValues: {
         ...initialData,
         password: "", // Always start with an empty password field for security
+        photo: initialData.photo || "",
     },
   })
 
@@ -46,6 +48,7 @@ export default function EditProfileForm({ onSave, initialData }: EditProfileForm
     form.reset({
         ...initialData,
         password: "",
+        photo: initialData.photo || "",
     });
   }, [initialData, form]);
 
@@ -59,10 +62,38 @@ export default function EditProfileForm({ onSave, initialData }: EditProfileForm
     
     onSave(updatedData);
   }
+  
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        form.setValue("photo", reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+         <FormField
+          control={form.control}
+          name="photo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Profile Picture</FormLabel>
+              <FormControl>
+                <Input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handlePhotoChange} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="name"
@@ -135,4 +166,3 @@ export default function EditProfileForm({ onSave, initialData }: EditProfileForm
     </Form>
   )
 }
-

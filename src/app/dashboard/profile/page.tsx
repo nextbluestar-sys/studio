@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog"
 import EditProfileForm from "./edit-profile-form"
 import { toast } from "@/hooks/use-toast"
+import { staff as allStaff } from "@/lib/data"
 
 export default function ProfilePage() {
   const [user, setUser] = useState<{ role: string; user?: Staff } | null>(null)
@@ -35,6 +36,13 @@ export default function ProfilePage() {
     const newUserState = { ...user, user: updatedUser };
     setUser(newUserState)
     localStorage.setItem("loggedInUser", JSON.stringify(newUserState))
+    
+    // Also update the staff array in data.ts for persistence across sessions in this demo
+    const staffIndex = allStaff.findIndex(s => s.id === updatedUser.id)
+    if(staffIndex > -1) {
+      allStaff[staffIndex] = updatedUser;
+    }
+
     toast({
       title: "Profile Updated",
       description: "Your profile information has been successfully updated.",

@@ -1,6 +1,7 @@
 "use client"
 
-import { PlusCircle } from "lucide-react"
+import { useState } from "react"
+import { MoreHorizontal, PlusCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -26,11 +27,71 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
-import { customers } from "@/lib/data"
+import { customers as initialCustomers } from "@/lib/data"
+import { Customer } from "@/lib/types"
 import CustomerForm from "./customer-form"
 
 export default function CustomersPage() {
+  const [customers, setCustomers] = useState<Customer[]>(initialCustomers)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null)
+  const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(null)
+
+  const handleAddCustomer = (newCustomerData: Omit<Customer, "id" | "purchaseHistory" | "joinedDate" | "value">) => {
+    const newCustomer: Customer = {
+      ...newCustomerData,
+      id: `cust-${Date.now()}`,
+      joinedDate: new Date().toISOString().split('T')[0],
+      purchaseHistory: [],
+      value: 0,
+    }
+    setCustomers((prev) => [...prev, newCustomer])
+    setDialogOpen(false)
+  }
+
+  const handleUpdateCustomer = (updatedCustomer: Customer) => {
+    setCustomers((prev) =>
+      prev.map((c) => (c.id === updatedCustomer.id ? updatedCustomer : c))
+    )
+    setEditingCustomer(null)
+    setDialogOpen(false)
+  }
+
+  const handleDeleteCustomer = () => {
+    if (deletingCustomer) {
+      setCustomers((prev) => prev.filter((c) => c.id !== deletingCustomer.id))
+      setDeletingCustomer(null)
+    }
+  }
+
+  const openEditDialog = (customer: Customer) => {
+    setEditingCustomer(customer)
+    setDialogOpen(true)
+  }
+
+  const openAddDialog = () => {
+    setEditingCustomer(null)
+    setDialogOpen(true)
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex items-start justify-between">
@@ -40,24 +101,59 @@ export default function CustomersPage() {
             Manage your customer database.
           </p>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Customer
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New Customer</DialogTitle>
-              <DialogDescription>
-                Fill in the details to register a new customer.
-              </DialogDescription>
-            </DialogHeader>
-            <CustomerForm />
-          </DialogContent>
-        </Dialog>
+        <Button onClick={openAddDialog}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add Customer
+        </Button>
       </div>
+
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(isOpen) => {
+          setDialogOpen(isOpen)
+          if (!isOpen) {
+            setEditingCustomer(null)
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {editingCustomer ? "Edit Customer" : "Add New Customer"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingCustomer
+                ? "Update the details for this customer."
+                : "Fill in the details to register a new customer."}
+            </DialogDescription>
+          </DialogHeader>
+          <CustomerForm
+            onSave={editingCustomer ? handleUpdateCustomer : handleAddCustomer}
+            initialData={editingCustomer}
+          />
+        </DialogContent>
+      </Dialog>
+      
+      <AlertDialog
+        open={!!deletingCustomer}
+        onOpenChange={() => setDeletingCustomer(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              customer: {deletingCustomer?.name}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteCustomer}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Card>
         <CardHeader>
@@ -75,6 +171,9 @@ export default function CustomersPage() {
                 <TableHead>Phone</TableHead>
                 <TableHead>Joined Date</TableHead>
                 <TableHead>Purchases</TableHead>
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -92,6 +191,28 @@ export default function CustomersPage() {
                         </Badge>
                       ))}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Toggle menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => openEditDialog(customer)}>
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setDeletingCustomer(customer)}
+                          className="text-destructive"
+                        >
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

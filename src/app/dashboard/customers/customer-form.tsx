@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
+import type { Customer } from "@/lib/types"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -22,22 +24,35 @@ const formSchema = z.object({
   phone: z.string().min(10, "Phone number seems too short."),
 })
 
-export default function CustomerForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
+type CustomerFormValues = z.infer<typeof formSchema>
+
+interface CustomerFormProps {
+  onSave: (data: any) => void;
+  initialData?: Customer | null;
+}
+
+export default function CustomerForm({ onSave, initialData }: CustomerFormProps) {
+  const form = useForm<CustomerFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       name: "",
       email: "",
       phone: "",
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  useEffect(() => {
+    form.reset(initialData || { name: "", email: "", phone: "" });
+  }, [initialData, form]);
+
+  function onSubmit(values: CustomerFormValues) {
+    const customerData = initialData ? { ...initialData, ...values } : values;
+    onSave(customerData)
     toast({
-      title: "Customer Registered",
-      description: `${values.name} has been added to the customer list.`,
+      title: initialData ? "Customer Updated" : "Customer Added",
+      description: `${values.name} has been successfully ${initialData ? 'updated' : 'added'}.`,
     })
+    form.reset();
   }
 
   return (
@@ -83,7 +98,7 @@ export default function CustomerForm() {
           )}
         />
         <Button type="submit" className="w-full">
-          Register Customer
+          {initialData ? "Save Changes" : "Add Customer"}
         </Button>
       </form>
     </Form>

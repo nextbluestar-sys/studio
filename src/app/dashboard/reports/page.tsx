@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select"
 import { attendance as allAttendance, staff as allStaff } from "@/lib/data"
 import type { Attendance, Staff } from "@/lib/types"
+import { toast } from "@/hooks/use-toast"
 
 interface ReportData {
   staff: Staff;
@@ -64,7 +65,7 @@ export default function ReportsPage() {
              new Date(a.date).getMonth() === selectedMonth
       );
 
-      const present = staffAttendance.filter(a => a.status === "Present").length;
+      const present = staffAttendance.filter(a => a.status === "Present" || a.status === "Half Day" || a.status === "Paid Leave").length;
       const absent = staffAttendance.filter(a => a.status === "Absent").length;
       const onLeave = staffAttendance.filter(a => a.status === "On Leave").length;
 
@@ -72,7 +73,7 @@ export default function ReportsPage() {
     });
 
     const salaryReport: SalaryData[] = attendanceReport.map(report => {
-        const workingDays = report.totalDays - new Date(selectedYear, selectedMonth, 1).getDay(); // Simple logic
+        const workingDays = report.totalDays - 8; // Assuming 4 weekends (8 days)
         const perDaySalary = report.staff.salary / workingDays;
         const deductions = report.absent * perDaySalary;
         const netSalary = report.staff.salary - deductions;
@@ -89,6 +90,46 @@ export default function ReportsPage() {
   };
 
   const { attendanceReport, salaryReport } = handleGenerateReport();
+
+  const handleDownload = () => {
+    const { attendanceReport, salaryReport } = handleGenerateReport();
+
+    const downloadCsv = (csvContent: string, fileName: string) => {
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // Attendance Report CSV
+    const attendanceHeaders = ["Staff", "Present", "Absent", "On Leave"];
+    let attendanceCsvContent = attendanceHeaders.join(',') + '\n';
+    attendanceReport.forEach(row => {
+        const rowData = [row.staff.name, row.present, row.absent, row.onLeave];
+        attendanceCsvContent += rowData.join(',') + '\n';
+    });
+    downloadCsv(attendanceCsvContent, `attendance-report-${months.find(m => m.value === selectedMonth)?.label}-${selectedYear}.csv`);
+
+    // Salary Report CSV
+    const salaryHeaders = ["Staff", "Base Salary", "Deductions", "Net Salary"];
+    let salaryCsvContent = salaryHeaders.join(',') + '\n';
+    salaryReport.forEach(row => {
+        const rowData = [row.staff.name, row.baseSalary, row.deductions, row.netSalary];
+        salaryCsvContent += rowData.join(',') + '\n';
+    });
+    downloadCsv(salaryCsvContent, `salary-report-${months.find(m => m.value === selectedMonth)?.label}-${selectedYear}.csv`);
+
+
+    toast({
+        title: "Reports Downloading",
+        description: "Your attendance and salary reports are being downloaded.",
+    });
+  };
 
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
   const months = Array.from({ length: 12 }, (_, i) => ({
@@ -109,7 +150,7 @@ export default function ReportsPage() {
             Generate monthly attendance and salary reports.
           </p>
         </div>
-        <Button>
+        <Button onClick={handleDownload}>
           <Download className="mr-2 h-4 w-4" />
           Download Reports
         </Button>

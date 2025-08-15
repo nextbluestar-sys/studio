@@ -5,10 +5,6 @@ runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
-# Required for Genkit to be able to discover the flows.
-gcloudBuild:
-  args:
-    - --pre-build-script=genkit,init,force
 # Required for Genkit to be able to access Google Cloud resources.
 requiredAPIs:
   - secretmanager.googleapis.com

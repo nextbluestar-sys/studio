@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Clock, LogIn, LogOut } from "lucide-react"
+import { Clock, LogIn, LogOut, MoreHorizontal, Edit } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -19,6 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogContent,
@@ -39,12 +46,15 @@ import { attendance as initialAttendance, staff } from "@/lib/data"
 import type { Attendance, Staff } from "@/lib/types"
 import { toast } from "@/hooks/use-toast"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 
 export default function AttendancePage() {
   const [attendance, setAttendance] = useState<Attendance[]>(initialAttendance)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogMode, setDialogMode] = useState<"clockIn" | "clockOut">("clockIn")
   const [selectedStaffId, setSelectedStaffId] = useState<string>("")
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<Attendance | null>(null);
 
   const getStatusBadgeVariant = (status: "Present" | "Absent" | "On Leave") => {
     switch (status) {
@@ -149,7 +159,23 @@ export default function AttendancePage() {
     setDialogOpen(false);
   }
 
-  // Filter staff who can be clocked in/out today
+  const openEditDialog = (record: Attendance) => {
+    setEditingRecord(record);
+    setEditDialogOpen(true);
+  }
+
+  const handleUpdateAttendance = () => {
+    if(!editingRecord) return;
+
+    setAttendance(prev => prev.map(rec => rec.id === editingRecord.id ? editingRecord : rec));
+    toast({
+      title: "Attendance Updated",
+      description: `Record for ${editingRecord.staff.name} on ${editingRecord.date} has been updated.`,
+    });
+    setEditDialogOpen(false);
+    setEditingRecord(null);
+  }
+
   const today = new Date().toISOString().split('T')[0];
   const staffForClockIn = staff.filter(s => 
     !attendance.some(a => a.staff.id === s.id && a.date === today && a.status === 'Present' && a.clockIn)
@@ -180,6 +206,7 @@ export default function AttendancePage() {
         </div>
       </div>
 
+      {/* Clock In/Out Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -217,6 +244,69 @@ export default function AttendancePage() {
         </DialogContent>
       </Dialog>
 
+      {/* Edit Attendance Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Attendance</DialogTitle>
+            <DialogDescription>
+                Update the attendance record for {editingRecord?.staff.name} on {editingRecord?.date}.
+            </DialogDescription>
+          </DialogHeader>
+          {editingRecord && (
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="clockIn" className="text-right">
+                  Clock In
+                </Label>
+                <Input
+                  id="clockIn"
+                  value={editingRecord.clockIn || ""}
+                  onChange={(e) => setEditingRecord({...editingRecord, clockIn: e.target.value})}
+                  className="col-span-3"
+                  placeholder="HH:MM"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="clockOut" className="text-right">
+                  Clock Out
+                </Label>
+                <Input
+                  id="clockOut"
+                  value={editingRecord.clockOut || ""}
+                  onChange={(e) => setEditingRecord({...editingRecord, clockOut: e.target.value})}
+                  className="col-span-3"
+                  placeholder="HH:MM"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">
+                  Status
+                </Label>
+                <Select 
+                  value={editingRecord.status} 
+                  onValueChange={(value: "Present" | "Absent" | "On Leave") => setEditingRecord({...editingRecord, status: value})}
+                >
+                  <SelectTrigger className="col-span-3" id="status">
+                    <SelectValue placeholder="Select a status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Present">Present</SelectItem>
+                    <SelectItem value="Absent">Absent</SelectItem>
+                    <SelectItem value="On Leave">On Leave</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleUpdateAttendance}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
       <Card>
         <CardHeader>
           <CardTitle>Attendance Log</CardTitle>
@@ -233,6 +323,9 @@ export default function AttendancePage() {
                 <TableHead>Clock In</TableHead>
                 <TableHead>Clock Out</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -251,6 +344,23 @@ export default function AttendancePage() {
                       >
                         {record.status}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button aria-haspopup="true" size="icon" variant="ghost">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Toggle menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => openEditDialog(record)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
               ))}

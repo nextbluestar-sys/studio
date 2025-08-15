@@ -135,9 +135,9 @@ export default function DashboardLayout({
             )}
              <SidebarMenuItem>
                 <Link href="/dashboard/profile" passHref>
-                  <SidebarMenuButton tooltip="Profile">
+                  <SidebarMenuButton tooltip="Manage Profile">
                     <User />
-                    Profile
+                    Manage Profile
                   </SidebarMenuButton>
                 </Link>
               </SidebarMenuItem>

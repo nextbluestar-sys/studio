@@ -7,9 +7,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import type { Staff } from "@/lib/types"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import EditProfileForm from "./edit-profile-form"
+import { toast } from "@/hooks/use-toast"
 
 export default function ProfilePage() {
   const [user, setUser] = useState<{ role: string; user?: Staff } | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser")
@@ -18,17 +29,32 @@ export default function ProfilePage() {
     }
   }, [])
 
+  const handleProfileUpdate = (updatedUser: Staff) => {
+    if (!user) return
+
+    const newUserState = { ...user, user: updatedUser };
+    setUser(newUserState)
+    localStorage.setItem("loggedInUser", JSON.stringify(newUserState))
+    toast({
+      title: "Profile Updated",
+      description: "Your profile information has been successfully updated.",
+    })
+    setDialogOpen(false)
+  }
+
   if (!user) {
     return <div>Loading...</div>
   }
 
   const getInitials = (name: string) => {
+    if (!name) return ""
     return name
       .split(" ")
       .map((n) => n[0])
       .join("")
   }
 
+  const isStaff = user.role === "Staff" && user.user
   const displayName = user.role === "Admin" ? "Administrator" : user.user?.name || "Staff"
   const displayEmail = user.role === "Admin" ? "admin@bluestarconnect.com" : user.user?.email
   const displayUsername = user.role === "Admin" ? "admin" : user.user?.username
@@ -61,35 +87,52 @@ export default function ProfilePage() {
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div>
-                <h3 className="font-semibold mb-2">Account Information</h3>
-                <div className="text-sm space-y-2">
+              <h3 className="font-semibold mb-2">Account Information</h3>
+              <div className="text-sm space-y-2">
                 <div className="flex justify-between">
-                    <span className="text-muted-foreground">Username:</span>
-                    <span>{displayUsername}</span>
+                  <span className="text-muted-foreground">Username:</span>
+                  <span>{displayUsername}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Role:</span>
-                    <Badge variant={user.role === 'Admin' ? 'destructive' : 'secondary'}>{user.user?.role || user.role}</Badge>
+                  <span className="text-muted-foreground">Role:</span>
+                  <Badge variant={user.role === 'Admin' ? 'destructive' : 'secondary'}>{user.user?.role || user.role}</Badge>
                 </div>
-                </div>
+              </div>
             </div>
             <div>
-                <h3 className="font-semibold mb-2">Contact Information</h3>
-                <div className="text-sm space-y-2">
+              <h3 className="font-semibold mb-2">Contact Information</h3>
+              <div className="text-sm space-y-2">
                 <div className="flex justify-between">
-                    <span className="text-muted-foreground">Contact Number:</span>
-                    <span>{displayPhone}</span>
+                  <span className="text-muted-foreground">Contact Number:</span>
+                  <span>{displayPhone}</span>
                 </div>
                 <div className="flex justify-between">
-                    <span className="text-muted-foreground">Address:</span>
-                    <span className="text-right max-w-xs truncate">{displayAddress}</span>
+                  <span className="text-muted-foreground">Address:</span>
+                  <span className="text-right max-w-xs truncate">{displayAddress}</span>
                 </div>
-                </div>
+              </div>
             </div>
           </div>
-          <div className="flex justify-end pt-4">
-            <Button>Update Profile</Button>
-          </div>
+          {isStaff && (
+            <div className="flex justify-end pt-4">
+               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button>Update Profile</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Edit Profile</DialogTitle>
+                        <DialogDescription>
+                            Update your personal information. Click save when you're done.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {user.user && (
+                        <EditProfileForm initialData={user.user} onSave={handleProfileUpdate} />
+                    )}
+                </DialogContent>
+               </Dialog>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

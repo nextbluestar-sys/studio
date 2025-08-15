@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Package,
   Users,
+  Briefcase
 } from "lucide-react";
 
 import {
@@ -51,6 +52,14 @@ export default function DashboardLayout({
                 <SidebarMenuButton tooltip="Customers">
                   <Users />
                   Customers
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <Link href="/dashboard/staff" passHref>
+                <SidebarMenuButton tooltip="Staff">
+                  <Briefcase />
+                  Staff
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>

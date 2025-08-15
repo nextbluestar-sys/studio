@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { PlusCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -27,10 +28,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import { staff } from "@/lib/data"
+import { staff as initialStaff } from "@/lib/data"
+import { Staff } from "@/lib/types"
 import StaffForm from "./staff-form"
 
 export default function StaffPage() {
+  const [staff, setStaff] = useState<Staff[]>(initialStaff);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleAddStaff = (newStaffMember: Omit<Staff, 'id'>) => {
+    const newStaff = { ...newStaffMember, id: `staff-${Date.now()}` };
+    setStaff((prevStaff) => [...prevStaff, newStaff]);
+    setDialogOpen(false); // Close the dialog after adding
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-start justify-between">
@@ -40,7 +51,7 @@ export default function StaffPage() {
             Manage your staff members.
           </p>
         </div>
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -54,7 +65,7 @@ export default function StaffPage() {
                 Fill in the details to add a new staff member.
               </DialogDescription>
             </DialogHeader>
-            <StaffForm />
+            <StaffForm onAddStaff={handleAddStaff} />
           </DialogContent>
         </Dialog>
       </div>

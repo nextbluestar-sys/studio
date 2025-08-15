@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "@/hooks/use-toast"
+import type { Staff } from "@/lib/types"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -29,7 +30,11 @@ const formSchema = z.object({
   role: z.string().min(1, "Please select a role."),
 })
 
-export default function StaffForm() {
+interface StaffFormProps {
+  onAddStaff: (staff: Omit<Staff, 'id'>) => void;
+}
+
+export default function StaffForm({ onAddStaff }: StaffFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -40,11 +45,12 @@ export default function StaffForm() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    onAddStaff(values);
     toast({
       title: "Staff Member Added",
       description: `${values.name} has been added to the staff list.`,
     })
+    form.reset();
   }
 
   return (

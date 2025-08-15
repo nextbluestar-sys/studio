@@ -27,11 +27,11 @@ export default function LoginPage() {
           <form className="space-y-6">
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input id="email" type="email" placeholder="email@example.com" className="pl-10" required />
+              <Input id="email" type="email" placeholder="email@example.com" className="pl-10" required defaultValue="admin@managepro.com" />
             </div>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input id="password" type="password" placeholder="********" className="pl-10" required />
+              <Input id="password" type="password" placeholder="********" className="pl-10" required defaultValue="password" />
             </div>
             <Link href="/dashboard">
               <Button type="submit" className="w-full text-lg">

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Building, Lock, Mail } from "lucide-react"
+import { Lock, Mail } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import Logo from "../components/logo"
 
 export default function LoginPage() {
   return (
@@ -17,8 +18,8 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
-            <Building className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-primary">Bluestar Tech Pro</h1>
+            <Logo className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold text-primary">Bluestar Connect</h1>
           </div>
           <CardTitle className="text-2xl">Welcome Back!</CardTitle>
           <CardDescription>Enter your credentials to access your account</CardDescription>

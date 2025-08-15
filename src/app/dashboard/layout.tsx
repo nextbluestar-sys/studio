@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  Building,
   Clock,
   FileText,
   LayoutDashboard,
@@ -20,6 +19,7 @@ import {
   SidebarInset,
 } from "@/components/ui/sidebar";
 import Header from "./components/header";
+import Logo from "../components/logo";
 
 export default function DashboardLayout({
   children,
@@ -31,9 +31,9 @@ export default function DashboardLayout({
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <Building className="w-7 h-7 text-primary" />
+            <Logo className="w-7 h-7 text-primary" />
             <h1 className="text-xl font-semibold text-sidebar-foreground">
-              Bluestar Tech Pro
+              Bluestar Connect
             </h1>
           </div>
         </SidebarHeader>

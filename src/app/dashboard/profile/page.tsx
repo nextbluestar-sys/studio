@@ -20,10 +20,12 @@ import { toast } from "@/hooks/use-toast"
 import { staff as allStaff } from "@/lib/data"
 import DigitalIdCard from "./digital-id-card"
 import { CreditCard } from "lucide-react"
+import ChangePasswordForm from "./change-password-form"
 
 export default function ProfilePage() {
   const [user, setUser] = useState<{ role: string; user?: Staff } | null>(null)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false)
   const [idCardOpen, setIdCardOpen] = useState(false)
 
   useEffect(() => {
@@ -53,6 +55,14 @@ export default function ProfilePage() {
     setEditDialogOpen(false)
   }
 
+  const handlePasswordChange = () => {
+    toast({
+      title: "Password Updated",
+      description: "Your password has been successfully updated.",
+    })
+    setPasswordDialogOpen(false);
+  }
+
   if (!user) {
     return <div>Loading...</div>
   }
@@ -66,11 +76,12 @@ export default function ProfilePage() {
   }
 
   const isStaff = user.role === "Staff" && user.user
-  const displayName = user.role === "Admin" ? "Administrator" : user.user?.name || "Staff"
-  const displayEmail = user.role === "Admin" ? "admin@bluestarconnect.com" : user.user?.email
-  const displayUsername = user.role === "Admin" ? "admin" : user.user?.username
-  const displayPhone = user.role === "Admin" ? "N/A" : user.user?.phone
-  const displayAddress = user.role === "Admin" ? "N/A" : user.user?.address
+  const isAdmin = user.role === "Admin"
+  const displayName = isAdmin ? "Administrator" : user.user?.name || "Staff"
+  const displayEmail = isAdmin ? "admin@bluestarconnect.com" : user.user?.email
+  const displayUsername = isAdmin ? "admin" : user.user?.username
+  const displayPhone = isAdmin ? "N/A" : user.user?.phone
+  const displayAddress = isAdmin ? "N/A" : user.user?.address
   const avatarSrc = user.user?.photo || `https://avatar.vercel.sh/${displayName}.png`
 
   return (
@@ -110,48 +121,68 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-            <div>
-              <h3 className="font-semibold mb-2">Contact Information</h3>
-              <div className="text-sm space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Contact Number:</span>
-                  <span>{displayPhone}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Address:</span>
-                  <span className="text-right max-w-xs truncate">{displayAddress}</span>
+            {isStaff && (
+              <div>
+                <h3 className="font-semibold mb-2">Contact Information</h3>
+                <div className="text-sm space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Contact Number:</span>
+                    <span>{displayPhone}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Address:</span>
+                    <span className="text-right max-w-xs truncate">{displayAddress}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
-          {isStaff && (
-            <div className="flex justify-end pt-4 gap-2">
-               <Dialog open={idCardOpen} onOpenChange={setIdCardOpen}>
+          <div className="flex justify-end pt-4 gap-2">
+            {isStaff && (
+              <>
+                <Dialog open={idCardOpen} onOpenChange={setIdCardOpen}>
+                  <DialogTrigger asChild>
+                      <Button variant="outline"><CreditCard className="mr-2 h-4 w-4" />View ID Card</Button>
+                  </DialogTrigger>
+                  <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-sm">
+                      {user.user && <DigitalIdCard staff={user.user} />}
+                  </DialogContent>
+                </Dialog>
+                <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                  <DialogTrigger asChild>
+                      <Button>Update Profile</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                      <DialogHeader>
+                          <DialogTitle>Edit Profile</DialogTitle>
+                          <DialogDescription>
+                              Update your personal information. Click save when you're done.
+                          </DialogDescription>
+                      </DialogHeader>
+                      {user.user && (
+                          <EditProfileForm initialData={user.user} onSave={handleProfileUpdate} />
+                      )}
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
+            {isAdmin && (
+              <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline"><CreditCard className="mr-2 h-4 w-4" />View ID Card</Button>
-                </DialogTrigger>
-                <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-sm">
-                    {user.user && <DigitalIdCard staff={user.user} />}
-                </DialogContent>
-               </Dialog>
-               <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-                <DialogTrigger asChild>
-                    <Button>Update Profile</Button>
+                  <Button>Change Password</Button>
                 </DialogTrigger>
                 <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Edit Profile</DialogTitle>
-                        <DialogDescription>
-                            Update your personal information. Click save when you're done.
-                        </DialogDescription>
-                    </DialogHeader>
-                    {user.user && (
-                        <EditProfileForm initialData={user.user} onSave={handleProfileUpdate} />
-                    )}
+                  <DialogHeader>
+                    <DialogTitle>Change Admin Password</DialogTitle>
+                    <DialogDescription>
+                      Enter a new password for the admin account.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <ChangePasswordForm onSave={handlePasswordChange} />
                 </DialogContent>
-               </Dialog>
-            </div>
-          )}
+              </Dialog>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

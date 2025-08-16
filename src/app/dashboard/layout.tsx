@@ -12,6 +12,7 @@ import {
   AreaChart,
   Settings,
   User,
+  UserCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -105,6 +106,16 @@ export default function DashboardLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
+             {isStaff && (
+                <SidebarMenuItem>
+                  <Link href="/dashboard/attendance/face-auth" passHref>
+                    <SidebarMenuButton tooltip="Face Authentication">
+                      <UserCheck />
+                      Face Auth
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+            )}
             {isAdmin && (
               <>
                 <SidebarMenuItem>

@@ -98,6 +98,7 @@ export default function DashboardLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
+            {isAdmin && (
             <SidebarMenuItem>
               <Link href="/dashboard/attendance" passHref>
                 <SidebarMenuButton tooltip="Attendance">
@@ -106,6 +107,7 @@ export default function DashboardLayout({
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
+            )}
              {isStaff && (
                 <SidebarMenuItem>
                   <Link href="/dashboard/attendance/face-auth" passHref>

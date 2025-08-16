@@ -26,7 +26,7 @@ export default function DigitalIdCard({ staff }: DigitalIdCardProps) {
       <div className="flex justify-between items-center pb-4 border-b-2 border-primary">
         <div className="flex items-center gap-2">
             <Logo className="w-8 h-8 text-primary" />
-            <h1 className="text-xl font-bold text-primary">Bluestar Connect</h1>
+            <h1 className="text-lg font-bold text-primary">Bluestar Electronics</h1>
         </div>
       </div>
       <div className="text-center pt-6">

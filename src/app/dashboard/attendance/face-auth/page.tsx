@@ -12,29 +12,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-import { staff } from "@/lib/data"
 import { toast } from "@/hooks/use-toast"
 import { verifyFace } from "@/ai/flows/verify-face"
 import type { Staff } from "@/lib/types"
 
 export default function FaceAuthPage() {
   const [loading, setLoading] = useState(false)
-  const [selectedStaffId, setSelectedStaffId] = useState<string>("")
+  const [user, setUser] = useState<{ role: string; user?: Staff } | null>(null)
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null)
   const [mode, setMode] = useState<"clockIn" | "clockOut">("clockIn")
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
+    const storedUser = localStorage.getItem("loggedInUser")
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser)
+      if (parsedUser.role === 'Staff') {
+        setUser(parsedUser)
+      }
+    }
+
     const getCameraPermission = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true })
@@ -80,11 +80,11 @@ export default function FaceAuthPage() {
   }
 
   const handleAttendance = async () => {
-    if (!selectedStaffId) {
+    if (!user || !user.user) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Please select your name.",
+        description: "Could not identify logged in user. Please log in again.",
       })
       return
     }
@@ -103,10 +103,10 @@ export default function FaceAuthPage() {
 
     try {
       const result = await verifyFace({
-        staffId: selectedStaffId,
+        staffId: user.user.id,
         photoDataUri,
       })
-      const staffMember = staff.find(s => s.id === selectedStaffId) as Staff
+      const staffMember = user.user;
 
       if (result.isVerified) {
         // In a real app, you would now update the attendance record in your database.
@@ -138,7 +138,7 @@ export default function FaceAuthPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Face Authentication</h1>
         <p className="text-muted-foreground">
-          Clock in and out using your face.
+          Clock in and out using your face, {user?.user?.name}.
         </p>
       </div>
 
@@ -146,7 +146,7 @@ export default function FaceAuthPage() {
         <CardHeader>
           <CardTitle>Attendance Camera</CardTitle>
           <CardDescription>
-            Position your face in the center of the frame and select your name.
+            Position your face in the center of the frame to record attendance.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -171,22 +171,8 @@ export default function FaceAuthPage() {
                  </div>
              )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="staff-select">Select Your Name</Label>
-            <Select onValueChange={setSelectedStaffId} value={selectedStaffId}>
-              <SelectTrigger id="staff-select">
-                <SelectValue placeholder="Select your name from the list" />
-              </SelectTrigger>
-              <SelectContent>
-                {staff.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-           <div className="flex gap-4">
+          
+           <div className="flex gap-4 pt-4">
              <Button 
                 className="w-full" 
                 onClick={() => { setMode("clockIn"); handleAttendance(); }}

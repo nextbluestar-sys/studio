@@ -1,9 +1,10 @@
+
 "use client"
 
 import { Staff } from "@/lib/types"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Logo from "@/app/components/logo"
-import Image from "next/image"
+import { Phone, Home } from "lucide-react"
 
 interface DigitalIdCardProps {
   staff: Staff
@@ -36,14 +37,15 @@ export default function DigitalIdCard({ staff }: DigitalIdCardProps) {
         <h2 className="mt-4 text-2xl font-bold text-gray-800">{staff.name}</h2>
         <p className="text-base text-gray-500">{staff.role}</p>
       </div>
-      <div className="flex justify-center items-center mt-6 p-4">
-        <Image 
-            src="https://placehold.co/120x120.png" 
-            alt="QR Code" 
-            width={120} 
-            height={120}
-            data-ai-hint="qr code"
-        />
+      <div className="mt-6 pt-6 border-t border-gray-200 space-y-4 text-gray-700">
+        <div className="flex items-center">
+            <Phone className="w-5 h-5 mr-3 text-primary" />
+            <span className="text-sm">{staff.phone || "Not provided"}</span>
+        </div>
+        <div className="flex items-start">
+            <Home className="w-5 h-5 mr-3 text-primary flex-shrink-0 mt-0.5" />
+            <span className="text-sm">{staff.address || "Not provided"}</span>
+        </div>
       </div>
        <div className="text-center pt-4 mt-4 border-t border-gray-200">
         <p className="text-xs text-gray-400">Staff ID: {staff.id}</p>

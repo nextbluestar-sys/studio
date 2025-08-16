@@ -45,7 +45,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
-import { customers as initialCustomers } from "@/lib/data"
+import { customers as initialCustomers, products } from "@/lib/data"
 import { Customer } from "@/lib/types"
 import CustomerForm from "./customer-form"
 
@@ -55,13 +55,12 @@ export default function CustomersPage() {
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null)
   const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(null)
 
-  const handleAddCustomer = (newCustomerData: Omit<Customer, "id" | "purchaseHistory" | "joinedDate" | "value">) => {
+  const handleAddCustomer = (newCustomerData: Omit<Customer, "id" | "joinedDate" | "value">) => {
     const newCustomer: Customer = {
       ...newCustomerData,
       id: `cust-${Date.now()}`,
       joinedDate: new Date().toISOString().split('T')[0],
-      purchaseHistory: [],
-      value: 0,
+      value: 0, // In a real app, this could be calculated based on purchase history
     }
     setCustomers((prev) => [...prev, newCustomer])
     setDialogOpen(false)
@@ -169,7 +168,7 @@ export default function CustomersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
-                <TableHead>Site Address</TableHead>
+                <TableHead>Products</TableHead>
                 <TableHead>Joined Date</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
@@ -182,7 +181,9 @@ export default function CustomersPage() {
                   <TableCell className="font-medium">{customer.name}</TableCell>
                   <TableCell>{customer.email}</TableCell>
                   <TableCell>{customer.phone}</TableCell>
-                  <TableCell>{customer.siteAddress}</TableCell>
+                  <TableCell>
+                    {customer.purchaseHistory.map(p => <Badge key={p.id} variant="outline" className="mr-1">{p.name}</Badge>)}
+                  </TableCell>
                   <TableCell>{customer.joinedDate}</TableCell>
                   <TableCell>
                     <DropdownMenu>

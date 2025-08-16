@@ -17,12 +17,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { toast } from "@/hooks/use-toast"
 import type { Customer } from "@/lib/types"
+import { MultiSelect, type MultiSelectOption } from "@/components/ui/multi-select"
+import { products } from "@/lib/data"
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Invalid email address."),
   phone: z.string().min(10, "Phone number seems too short."),
   siteAddress: z.string().min(5, "Site address seems too short."),
+  productIds: z.array(z.string()).optional(),
 })
 
 type CustomerFormValues = z.infer<typeof formSchema>
@@ -32,29 +36,47 @@ interface CustomerFormProps {
   initialData?: Customer | null;
 }
 
+const productOptions: MultiSelectOption[] = products.map(p => ({ value: p.id, label: p.name }));
+
 export default function CustomerForm({ onSave, initialData }: CustomerFormProps) {
   const form = useForm<CustomerFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
-      name: "",
-      email: "",
-      phone: "",
-      siteAddress: "",
+    defaultValues: {
+      name: initialData?.name || "",
+      email: initialData?.email || "",
+      phone: initialData?.phone || "",
+      siteAddress: initialData?.siteAddress || "",
+      productIds: initialData?.purchaseHistory.map(p => p.id) || [],
     },
   })
 
   useEffect(() => {
-    form.reset(initialData || { name: "", email: "", phone: "", siteAddress: "" });
+    form.reset({
+      name: initialData?.name || "",
+      email: initialData?.email || "",
+      phone: initialData?.phone || "",
+      siteAddress: initialData?.siteAddress || "",
+      productIds: initialData?.purchaseHistory.map(p => p.id) || [],
+    });
   }, [initialData, form]);
 
   function onSubmit(values: CustomerFormValues) {
-    const customerData = initialData ? { ...initialData, ...values } : values;
+    const purchaseHistory = values.productIds 
+      ? values.productIds.map(id => products.find(p => p.id === id)).filter(Boolean)
+      : [];
+      
+    const customerData = { 
+      ...(initialData || {}), 
+      ...values,
+      purchaseHistory,
+    };
+    
     onSave(customerData)
     toast({
       title: initialData ? "Customer Updated" : "Customer Added",
       description: `${values.name} has been successfully ${initialData ? 'updated' : 'added'}.`,
     })
-    form.reset();
+    form.reset({ name: "", email: "", phone: "", siteAddress: "", productIds: [] });
   }
 
   return (
@@ -107,6 +129,24 @@ export default function CustomerForm({ onSave, initialData }: CustomerFormProps)
               <FormLabel>Site Address</FormLabel>
               <FormControl>
                 <Input placeholder="123 Business Rd, Commerce City" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="productIds"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Products Purchased</FormLabel>
+              <FormControl>
+                <MultiSelect
+                    options={productOptions}
+                    selected={field.value || []}
+                    onChange={field.onChange}
+                    placeholder="Select products..."
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

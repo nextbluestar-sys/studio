@@ -19,7 +19,7 @@ import EditProfileForm from "./edit-profile-form"
 import { toast } from "@/hooks/use-toast"
 import { staff as allStaff } from "@/lib/data"
 import DigitalIdCard from "./digital-id-card"
-import { CreditCard } from "lucide-react"
+import { CreditCard, Edit, KeyRound } from "lucide-react"
 import ChangePasswordForm from "./change-password-form"
 
 export default function ProfilePage() {
@@ -145,16 +145,32 @@ export default function ProfilePage() {
                       <Button variant="outline"><CreditCard className="mr-2 h-4 w-4" />View ID Card</Button>
                   </DialogTrigger>
                   <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-sm">
-                      <DialogHeader className="sr-only">
+                      <DialogHeader>
                         <DialogTitle>Digital ID Card</DialogTitle>
                         <DialogDescription>Your digital staff identification card.</DialogDescription>
                       </DialogHeader>
                       {user.user && <DigitalIdCard staff={user.user} />}
                   </DialogContent>
                 </Dialog>
+                
+                <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline"><KeyRound className="mr-2 h-4 w-4" />Change Password</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Change Password</DialogTitle>
+                      <DialogDescription>
+                        Enter and confirm your new password.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <ChangePasswordForm onSave={handlePasswordChange} />
+                  </DialogContent>
+                </Dialog>
+
                 <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
                   <DialogTrigger asChild>
-                      <Button>Update Profile</Button>
+                      <Button><Edit className="mr-2 h-4 w-4" />Update Profile</Button>
                   </DialogTrigger>
                   <DialogContent>
                       <DialogHeader>
@@ -168,12 +184,13 @@ export default function ProfilePage() {
                       )}
                   </DialogContent>
                 </Dialog>
+
               </>
             )}
             {isAdmin && (
               <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button>Change Password</Button>
+                  <Button><KeyRound className="mr-2 h-4 w-4" />Change Password</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>

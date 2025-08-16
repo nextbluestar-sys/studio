@@ -23,7 +23,6 @@ const formSchema = z.object({
   email: z.string().email("Invalid email address."),
   phone: z.string().optional(),
   address: z.string().optional(),
-  password: z.string().min(6, "Password must be at least 6 characters.").or(z.literal("")),
   photo: z.string().optional(),
 })
 
@@ -39,7 +38,6 @@ export default function EditProfileForm({ onSave, initialData }: EditProfileForm
     resolver: zodResolver(formSchema),
     defaultValues: {
         ...initialData,
-        password: "", // Always start with an empty password field for security
         photo: initialData.photo || "",
     },
   })
@@ -47,19 +45,12 @@ export default function EditProfileForm({ onSave, initialData }: EditProfileForm
   useEffect(() => {
     form.reset({
         ...initialData,
-        password: "",
         photo: initialData.photo || "",
     });
   }, [initialData, form]);
 
   function onSubmit(values: ProfileFormValues) {
     const updatedData = { ...initialData, ...values };
-
-    // Don't update password if the field was left empty
-    if (!values.password) {
-      delete updatedData.password;
-    }
-    
     onSave(updatedData);
   }
   
@@ -141,19 +132,6 @@ export default function EditProfileForm({ onSave, initialData }: EditProfileForm
               <FormLabel>Address</FormLabel>
               <FormControl>
                 <Input placeholder="123 Main St, Anytown" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>New Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Leave blank to keep current password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

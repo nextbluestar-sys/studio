@@ -145,6 +145,10 @@ export default function ProfilePage() {
                       <Button variant="outline"><CreditCard className="mr-2 h-4 w-4" />View ID Card</Button>
                   </DialogTrigger>
                   <DialogContent className="p-0 bg-transparent border-none shadow-none max-w-sm">
+                      <DialogHeader className="sr-only">
+                        <DialogTitle>Digital ID Card</DialogTitle>
+                        <DialogDescription>Your digital staff identification card.</DialogDescription>
+                      </DialogHeader>
                       {user.user && <DigitalIdCard staff={user.user} />}
                   </DialogContent>
                 </Dialog>
